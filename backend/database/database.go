@@ -9,10 +9,10 @@ import (
 )
 
 type Flashcard struct {
-	ID         int64
-	OwnerID    int64
-	Term       string
-	Definition string
+	ID         int64  `json:"id"`
+	OwnerID    int64  `json:"owner_id"`
+	Term       string `json:"term"`
+	Definition string `json:"definition"`
 }
 
 func (flashcard Flashcard) String() string {

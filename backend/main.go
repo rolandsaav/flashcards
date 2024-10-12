@@ -2,6 +2,7 @@ package main
 
 import (
 	"backend/database"
+	routes "backend/routes/flashcards"
 	"fmt"
 	"os"
 
@@ -54,5 +55,10 @@ func main() {
 	}
 
 	router := gin.Default()
+
+	router.GET("/flashcards", func(c *gin.Context) {
+		routes.HandleGetFlashcards(c, db)
+	})
+
 	router.Run("localhost:8080")
 }
