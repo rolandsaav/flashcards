@@ -1,6 +1,7 @@
 package main
 
 import (
+	"backend/app"
 	"backend/database"
 	routes "backend/routes/flashcards"
 	"fmt"
@@ -30,6 +31,8 @@ func main() {
 		fmt.Println("Connected to database")
 	}
 
+	app := &app.App{DB: db}
+
 	testcard := database.Flashcard{
 		Term:       "Test please",
 		Definition: "Test definition",
@@ -56,9 +59,7 @@ func main() {
 
 	router := gin.Default()
 
-	router.GET("/flashcards", func(c *gin.Context) {
-		routes.HandleGetFlashcards(c, db)
-	})
+	router.GET("/flashcards", routes.HandleGetFlashcards(app))
 
 	router.Run("localhost:8080")
 }
