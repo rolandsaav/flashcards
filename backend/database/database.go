@@ -15,6 +15,10 @@ type Flashcard struct {
 	Definition string `json:"definition"`
 }
 
+type FlashcardDB struct {
+	DB *sql.DB
+}
+
 func (flashcard Flashcard) String() string {
 	return fmt.Sprintf(
 		"ID: %d\nOwner: %d\nTerm: %s\nDefinition: %s",
@@ -41,8 +45,8 @@ func ConnectToDB(cfg mysql.Config) (*sql.DB, error) {
 	return db, nil
 }
 
-func CreateFlashcard(db *sql.DB, flashcard Flashcard) (int64, error) {
-	result, err := db.Exec(
+func (db *FlashcardDB) CreateFlashcard(flashcard Flashcard) (int64, error) {
+	result, err := db.DB.Exec(
 		"INSERT INTO flashcard (term, definition, ownerId) VALUES (?, ?, ?)",
 		flashcard.Term,
 		flashcard.Definition,
@@ -61,10 +65,10 @@ func CreateFlashcard(db *sql.DB, flashcard Flashcard) (int64, error) {
 	return id, nil
 }
 
-func GetFlashcards(db *sql.DB) ([]Flashcard, error) {
+func (db *FlashcardDB) GetFlashcards() ([]Flashcard, error) {
 	var flashcards []Flashcard
 
-	rows, err := db.Query("SELECT * FROM flashcard")
+	rows, err := db.DB.Query("SELECT * FROM flashcard")
 
 	if err != nil {
 		return nil, fmt.Errorf("Get all flashcards: %v", err)

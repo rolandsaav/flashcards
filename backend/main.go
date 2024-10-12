@@ -21,8 +21,6 @@ func main() {
 		DBName: "quizlet",
 	}
 
-	fmt.Println(cfg.User, cfg.Passwd)
-
 	db, err := database.ConnectToDB(cfg)
 
 	if err != nil {
@@ -31,7 +29,7 @@ func main() {
 		fmt.Println("Connected to database")
 	}
 
-	app := &app.App{DB: db}
+	app := &app.App{FlashcardDB: database.FlashcardDB{DB: db}}
 
 	router := gin.Default()
 

@@ -2,7 +2,6 @@ package routes
 
 import (
 	"backend/app"
-	"backend/database"
 	"fmt"
 	"net/http"
 
@@ -11,7 +10,7 @@ import (
 
 func HandleGetFlashcards(app *app.App) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		flashcards, err := database.GetFlashcards(app.DB)
+		flashcards, err := app.FlashcardDB.GetFlashcards()
 
 		if err != nil {
 			fmt.Println("Get flashcards handler error")

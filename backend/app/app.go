@@ -1,7 +1,7 @@
 package app
 
-import "database/sql"
+import "backend/database"
 
 type App struct {
-	DB *sql.DB
+	FlashcardDB database.FlashcardDB
 }
