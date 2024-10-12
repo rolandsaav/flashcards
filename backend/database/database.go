@@ -45,8 +45,8 @@ func ConnectToDB(cfg mysql.Config) (*sql.DB, error) {
 	return db, nil
 }
 
-func (db *FlashcardDB) CreateFlashcard(flashcard Flashcard) (int64, error) {
-	result, err := db.DB.Exec(
+func (db *FlashcardDB) CreateFlashcard(flashcard Flashcard) (*Flashcard, error) {
+	_, err := db.DB.Exec(
 		"INSERT INTO flashcard (term, definition, ownerId) VALUES (?, ?, ?)",
 		flashcard.Term,
 		flashcard.Definition,
@@ -54,15 +54,15 @@ func (db *FlashcardDB) CreateFlashcard(flashcard Flashcard) (int64, error) {
 	)
 
 	if err != nil {
-		return 0, fmt.Errorf("Add data: %v", err)
+		return nil, fmt.Errorf("Add data: %v", err)
 	}
 
-	id, err := result.LastInsertId()
-	if err != nil {
-		return 0, fmt.Errorf("Add data: %v", err)
-	}
+	// id, err := result.LastInsertId()
+	// if err != nil {
+	// 	return nil, fmt.Errorf("Add data: %v", err)
+	// }
 
-	return id, nil
+	return &flashcard, nil
 }
 
 func (db *FlashcardDB) GetFlashcards() ([]Flashcard, error) {
@@ -89,10 +89,10 @@ func (db *FlashcardDB) GetFlashcards() ([]Flashcard, error) {
 	return flashcards, nil
 }
 
-func GetFlashcardsByOwner(db *sql.DB, ownerId int64) ([]Flashcard, error) {
+func (db *FlashcardDB) GetFlashcardsByOwner(ownerId int64) ([]Flashcard, error) {
 	var flashcards []Flashcard
 
-	rows, err := db.Query("SELECT * FROM flashcard WHERE ownerId = ?", ownerId)
+	rows, err := db.DB.Query("SELECT * FROM flashcard WHERE ownerId = ?", ownerId)
 
 	if err != nil {
 		return nil, fmt.Errorf("Get flashcards by ownerId: %v", err)

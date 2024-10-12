@@ -34,6 +34,7 @@ func main() {
 	router := gin.Default()
 
 	router.GET("/flashcards", routes.HandleGetFlashcards(app))
+	router.POST("/flashcards", routes.HandleCreateFlashcard(app))
 
 	router.Run("localhost:8080")
 }

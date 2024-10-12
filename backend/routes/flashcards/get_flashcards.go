@@ -16,6 +16,11 @@ func HandleGetFlashcards(app *app.App) gin.HandlerFunc {
 			fmt.Println("Get flashcards handler error")
 		}
 
+		if len(flashcards) == 0 {
+			c.IndentedJSON(http.StatusOK, "No flashcards found")
+			return
+		}
+
 		c.IndentedJSON(http.StatusOK, flashcards)
 	}
 }
