@@ -33,30 +33,6 @@ func main() {
 
 	app := &app.App{DB: db}
 
-	testcard := database.Flashcard{
-		Term:       "Test please",
-		Definition: "Test definition",
-		OwnerID:    20,
-	}
-
-	cardid, err := database.CreateFlashcard(db, testcard)
-
-	if err != nil {
-		fmt.Println("create flashcard error")
-	}
-
-	fmt.Println(cardid)
-
-	flashcards, err := database.GetFlashcardsByOwner(db, 19)
-
-	if err != nil {
-		fmt.Println("couldn't get flashcards")
-	}
-
-	for _, card := range flashcards {
-		fmt.Println(card.String())
-	}
-
 	router := gin.Default()
 
 	router.GET("/flashcards", routes.HandleGetFlashcards(app))
