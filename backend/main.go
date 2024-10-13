@@ -9,6 +9,7 @@ import (
 
 	"github.com/go-sql-driver/mysql"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -32,6 +33,13 @@ func main() {
 	app := &app.App{FlashcardDB: database.FlashcardDB{DB: db}}
 
 	router := gin.Default()
+
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:5173"},                   // Frontend on localhost:5173
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},            // Allowed methods
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"}, // Allowed headers
+		AllowCredentials: true,
+	}))
 
 	router.GET("/flashcards", routes.HandleGetFlashcards(app))
 	router.POST("/flashcards", routes.HandleCreateFlashcard(app))
