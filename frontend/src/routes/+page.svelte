@@ -2,11 +2,23 @@
 	import type { Flashcard } from '../types/Flashcard';
 	export let data: { flashcards: Flashcard[] };
 
+	let flashcards = data.flashcards;
+
 	let term = '';
 	let definition = '';
 	let owner = 0;
+	let i = 0;
 
-	async function createFlashcard(event: SubmitEvent) {
+	$: selected = flashcards[i];
+	$: resetInputs(selected);
+
+	function resetInputs(card: Flashcard) {
+		term = card ? card.term : '';
+		definition = card ? card.definition : '';
+		owner = card ? card.owner_id : NaN;
+	}
+
+	async function createFlashcard(event: MouseEvent) {
 		event.preventDefault();
 
 		try {
@@ -23,7 +35,37 @@
 			if (response.ok) {
 				console.log('Created flashcard');
 				const body: Flashcard = await response.json();
-				data.flashcards = data.flashcards.concat(body);
+				flashcards = flashcards.concat(body);
+			} else {
+				console.log('There was a problem');
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	}
+
+	async function updateFlashcard(event: MouseEvent) {
+		event.preventDefault();
+
+		try {
+			const response = await fetch('http://localhost:8080/flashcards', {
+				method: 'PATCH',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					id: selected.id,
+					owner_id: owner,
+					term: term,
+					definition: definition
+				})
+			});
+
+			if (response.ok) {
+				console.log('Updated flashcard');
+				const body: Flashcard = await response.json();
+				selected.term = body.term;
+				selected.definition = body.definition;
+				selected.owner_id = body.owner_id;
+				flashcards = flashcards;
 			} else {
 				console.log('There was a problem');
 			}
@@ -36,14 +78,14 @@
 <h1>Welcome to Flashcards</h1>
 <p>This is all of the flashcards</p>
 
-<ul>
-	{#each data.flashcards as item}
-		<li>{item.term} : {item.definition} &slarr; {item.owner_id}</li>
+<select size={5} bind:value={i}>
+	{#each flashcards as item, index}
+		<option value={index}>{item.term} : {item.definition} &slarr; {item.owner_id} : {index}</option>
 	{/each}
-</ul>
+</select>
 
 <h2>Create New Flashcard</h2>
-<form class="inputs" on:submit={createFlashcard}>
+<form class="inputs">
 	<div class="input">
 		<label for="term">Term</label>
 		<input bind:value={term} name="term" id="term" type="text" />
@@ -57,7 +99,11 @@
 		<input bind:value={owner} name="owner" id="owner" type="number" />
 	</div>
 
-	<button type="submit">Create</button>
+	<div class="buttons">
+		<button on:click={createFlashcard}>Create</button>
+		<button on:click={updateFlashcard}>Update</button>
+		<button>Delete</button>
+	</div>
 </form>
 
 <style>
@@ -84,5 +130,14 @@
 	.input textarea {
 		flex-grow: 1;
 		resize: vertical;
+	}
+
+	.buttons {
+		display: flex;
+		gap: 5px;
+	}
+
+	.buttons button {
+		flex-grow: 1;
 	}
 </style>
