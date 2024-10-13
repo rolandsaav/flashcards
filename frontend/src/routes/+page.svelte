@@ -36,6 +36,7 @@
 				console.log('Created flashcard');
 				const body: Flashcard = await response.json();
 				flashcards = flashcards.concat(body);
+				i = flashcards.length - 1;
 			} else {
 				console.log('There was a problem');
 			}
@@ -73,6 +74,26 @@
 			console.error(error);
 		}
 	}
+	async function deleteFlashcard(event: MouseEvent) {
+		event.preventDefault();
+
+		try {
+			const response = await fetch(`http://localhost:8080/flashcards/${selected.id}`, {
+				method: 'DELETE',
+				headers: { 'Content-Type': 'application/json' }
+			});
+
+			if (response.ok) {
+				console.log('Deleted flashcard');
+				const index = flashcards.indexOf(selected);
+				flashcards = [...flashcards.slice(0, index), ...flashcards.slice(index + 1)];
+			} else {
+				console.log('There was a problem');
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	}
 </script>
 
 <h1>Welcome to Flashcards</h1>
@@ -102,7 +123,7 @@
 	<div class="buttons">
 		<button on:click={createFlashcard}>Create</button>
 		<button on:click={updateFlashcard}>Update</button>
-		<button>Delete</button>
+		<button on:click={deleteFlashcard}>Delete</button>
 	</div>
 </form>
 
