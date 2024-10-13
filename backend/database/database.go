@@ -157,3 +157,23 @@ func (db *FlashcardDB) UpdateFlashcard(flashcard Flashcard) (*Flashcard, error) 
 
 	return &resultFlashcard, nil
 }
+
+func (db *FlashcardDB) DeleteFlashcard(flashcardId int64) (bool, error) {
+	result, err := db.DB.Exec("DELETE FROM flashcard WHERE id = ?", flashcardId)
+
+	if err != nil {
+		return false, fmt.Errorf("Delete flashcard: %v", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+
+	if err != nil {
+		return false, fmt.Errorf("Delete flashcard, rows affected: %v", err)
+	}
+
+	if rowsAffected == 0 {
+		return false, &NoFlashcardError{ID: flashcardId}
+	}
+
+	return true, nil
+}
