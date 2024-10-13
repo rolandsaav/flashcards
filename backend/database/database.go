@@ -38,7 +38,6 @@ func ConnectToDB(cfg mysql.Config) (*sql.DB, error) {
 
 	pingErr := db.Ping()
 	if pingErr != nil {
-		fmt.Println("What the fuck 2?")
 		log.Fatal(pingErr)
 		return nil, fmt.Errorf("Connect to database: %v", pingErr)
 	}
@@ -46,7 +45,7 @@ func ConnectToDB(cfg mysql.Config) (*sql.DB, error) {
 }
 
 func (db *FlashcardDB) CreateFlashcard(flashcard Flashcard) (*Flashcard, error) {
-	_, err := db.DB.Exec(
+	result, err := db.DB.Exec(
 		"INSERT INTO flashcard (term, definition, ownerId) VALUES (?, ?, ?)",
 		flashcard.Term,
 		flashcard.Definition,
@@ -57,12 +56,19 @@ func (db *FlashcardDB) CreateFlashcard(flashcard Flashcard) (*Flashcard, error) 
 		return nil, fmt.Errorf("Add data: %v", err)
 	}
 
-	// id, err := result.LastInsertId()
-	// if err != nil {
-	// 	return nil, fmt.Errorf("Add data: %v", err)
-	// }
+	id, err := result.LastInsertId()
+	if err != nil {
+		return nil, fmt.Errorf("Add data: %v", err)
+	}
 
-	return &flashcard, nil
+	newFlashcard := Flashcard{
+		ID:         id,
+		OwnerID:    flashcard.OwnerID,
+		Term:       flashcard.Term,
+		Definition: flashcard.Definition,
+	}
+
+	return &newFlashcard, nil
 }
 
 func (db *FlashcardDB) GetFlashcards() ([]Flashcard, error) {
@@ -111,4 +117,43 @@ func (db *FlashcardDB) GetFlashcardsByOwner(ownerId int64) ([]Flashcard, error) 
 	}
 
 	return flashcards, nil
+}
+
+type NoFlashcardError struct {
+	ID int64
+}
+
+func (e *NoFlashcardError) Error() string {
+	return fmt.Sprintf("No flashcard found in database with id: %d", e.ID)
+}
+
+func (db *FlashcardDB) UpdateFlashcard(flashcard Flashcard) (*Flashcard, error) {
+	result, err := db.DB.Exec("UPDATE flashcard SET term = ?, definition = ? WHERE id = ?",
+		flashcard.Term,
+		flashcard.Definition,
+		flashcard.ID,
+	)
+
+	if err != nil {
+		return nil, fmt.Errorf("Update flashcard: %v", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+
+	if err != nil {
+		return nil, fmt.Errorf("Update flashcard, rows affected: %v", err)
+	}
+
+	if rowsAffected == 0 {
+		return nil, &NoFlashcardError{ID: flashcard.ID}
+	}
+
+	resultFlashcard := Flashcard{
+		ID:         flashcard.ID,
+		OwnerID:    flashcard.OwnerID,
+		Term:       flashcard.Term,
+		Definition: flashcard.Definition,
+	}
+
+	return &resultFlashcard, nil
 }

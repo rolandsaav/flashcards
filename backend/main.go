@@ -35,6 +35,7 @@ func main() {
 
 	router.GET("/flashcards", routes.HandleGetFlashcards(app))
 	router.POST("/flashcards", routes.HandleCreateFlashcard(app))
+	router.PATCH("/flashcards", routes.HandleUpdateFlashcard(app))
 
 	router.Run("localhost:8080")
 }
