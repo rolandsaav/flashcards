@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS flashcard
+DROP TABLE IF EXISTS flashcard;
 DROP TABLE IF EXISTS flashcards;
 CREATE TABLE flashcards (
   id         INT AUTO_INCREMENT NOT NULL,
@@ -15,7 +15,7 @@ CREATE TABLE users (
     hashed VARCHAR(128) NOT NULL,
     salt VARCHAR(32) NOT NULL,
     PRIMARY KEY (`id`)
-)
+);
 DROP TABLE IF EXISTS sessions;
 CREATE TABLE sessions (
     id INT AUTO_INCREMENT NOT NULL,
@@ -23,4 +23,4 @@ CREATE TABLE sessions (
     expiration TIME NOT NULL,
     created TIME NOT NULL,
     PRIMARY KEY (`id`)
-)
+);
