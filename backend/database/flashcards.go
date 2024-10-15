@@ -46,7 +46,7 @@ func ConnectToDB(cfg mysql.Config) (*sql.DB, error) {
 
 func (db *FlashcardDB) CreateFlashcard(flashcard Flashcard) (*Flashcard, error) {
 	result, err := db.DB.Exec(
-		"INSERT INTO flashcard (term, definition, ownerId) VALUES (?, ?, ?)",
+		"INSERT INTO flashcards (term, definition, ownerId) VALUES (?, ?, ?)",
 		flashcard.Term,
 		flashcard.Definition,
 		flashcard.OwnerID,
@@ -74,7 +74,7 @@ func (db *FlashcardDB) CreateFlashcard(flashcard Flashcard) (*Flashcard, error) 
 func (db *FlashcardDB) GetFlashcards() ([]Flashcard, error) {
 	var flashcards []Flashcard
 
-	rows, err := db.DB.Query("SELECT * FROM flashcard")
+	rows, err := db.DB.Query("SELECT * FROM flashcards")
 
 	if err != nil {
 		return nil, fmt.Errorf("Get all flashcards: %v", err)
@@ -98,7 +98,7 @@ func (db *FlashcardDB) GetFlashcards() ([]Flashcard, error) {
 func (db *FlashcardDB) GetFlashcardsByOwner(ownerId int64) ([]Flashcard, error) {
 	var flashcards []Flashcard
 
-	rows, err := db.DB.Query("SELECT * FROM flashcard WHERE ownerId = ?", ownerId)
+	rows, err := db.DB.Query("SELECT * FROM flashcards WHERE ownerId = ?", ownerId)
 
 	if err != nil {
 		return nil, fmt.Errorf("Get flashcards by ownerId: %v", err)
@@ -128,7 +128,7 @@ func (e *NoFlashcardError) Error() string {
 }
 
 func (db *FlashcardDB) UpdateFlashcard(flashcard Flashcard) (*Flashcard, error) {
-	result, err := db.DB.Exec("UPDATE flashcard SET term = ?, definition = ? WHERE id = ?",
+	result, err := db.DB.Exec("UPDATE flashcards SET term = ?, definition = ? WHERE id = ?",
 		flashcard.Term,
 		flashcard.Definition,
 		flashcard.ID,
@@ -159,7 +159,7 @@ func (db *FlashcardDB) UpdateFlashcard(flashcard Flashcard) (*Flashcard, error) 
 }
 
 func (db *FlashcardDB) DeleteFlashcard(flashcardId int64) (bool, error) {
-	result, err := db.DB.Exec("DELETE FROM flashcard WHERE id = ?", flashcardId)
+	result, err := db.DB.Exec("DELETE FROM flashcards WHERE id = ?", flashcardId)
 
 	if err != nil {
 		return false, fmt.Errorf("Delete flashcard: %v", err)
