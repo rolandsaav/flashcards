@@ -4,3 +4,8 @@ export type Flashcard = {
     term: string,
     definition: string,
 }
+
+export type GetFlashcardsResponse = {
+    data: Flashcard[],
+    error: string,
+}

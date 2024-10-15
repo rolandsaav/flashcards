@@ -1,11 +1,13 @@
-import type { Flashcard } from "../types/Flashcard";
+import type { GetFlashcardsResponse } from "../types/Flashcard";
 
 export async function load() {
     const res = await fetch("http://localhost:8080/flashcards");
 
-    const flashcards: Flashcard[] = await res.json()
+    const response: GetFlashcardsResponse = await res.json()
+
+    const flashcards = response.data
 
     return {
-        flashcards: flashcards
+        flashcards: flashcards,
     };
 }
