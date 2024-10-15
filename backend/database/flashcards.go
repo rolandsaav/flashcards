@@ -3,9 +3,6 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	"log"
-
-	"github.com/go-sql-driver/mysql"
 )
 
 type Flashcard struct {
@@ -29,22 +26,7 @@ func (flashcard Flashcard) String() string {
 	)
 }
 
-func ConnectToDB(cfg mysql.Config) (*sql.DB, error) {
-	db, err := sql.Open("mysql", cfg.FormatDSN())
-
-	if err != nil {
-		return nil, fmt.Errorf("Connect to database: %v", err)
-	}
-
-	pingErr := db.Ping()
-	if pingErr != nil {
-		log.Fatal(pingErr)
-		return nil, fmt.Errorf("Connect to database: %v", pingErr)
-	}
-	return db, nil
-}
-
-func (db *FlashcardDB) CreateFlashcard(flashcard Flashcard) (*Flashcard, error) {
+func (db *Database) CreateFlashcard(flashcard Flashcard) (*Flashcard, error) {
 	result, err := db.DB.Exec(
 		"INSERT INTO flashcards (term, definition, ownerId) VALUES (?, ?, ?)",
 		flashcard.Term,
@@ -71,7 +53,7 @@ func (db *FlashcardDB) CreateFlashcard(flashcard Flashcard) (*Flashcard, error) 
 	return &newFlashcard, nil
 }
 
-func (db *FlashcardDB) GetFlashcards() ([]Flashcard, error) {
+func (db *Database) GetFlashcards() ([]Flashcard, error) {
 	var flashcards []Flashcard
 
 	rows, err := db.DB.Query("SELECT * FROM flashcards")
@@ -95,7 +77,7 @@ func (db *FlashcardDB) GetFlashcards() ([]Flashcard, error) {
 	return flashcards, nil
 }
 
-func (db *FlashcardDB) GetFlashcardsByOwner(ownerId int64) ([]Flashcard, error) {
+func (db *Database) GetFlashcardsByOwner(ownerId int64) ([]Flashcard, error) {
 	var flashcards []Flashcard
 
 	rows, err := db.DB.Query("SELECT * FROM flashcards WHERE ownerId = ?", ownerId)
@@ -127,7 +109,7 @@ func (e *NoFlashcardError) Error() string {
 	return fmt.Sprintf("No flashcard found in database with id: %d", e.ID)
 }
 
-func (db *FlashcardDB) UpdateFlashcard(flashcard Flashcard) (*Flashcard, error) {
+func (db *Database) UpdateFlashcard(flashcard Flashcard) (*Flashcard, error) {
 	result, err := db.DB.Exec("UPDATE flashcards SET term = ?, definition = ? WHERE id = ?",
 		flashcard.Term,
 		flashcard.Definition,
@@ -158,7 +140,7 @@ func (db *FlashcardDB) UpdateFlashcard(flashcard Flashcard) (*Flashcard, error) 
 	return &resultFlashcard, nil
 }
 
-func (db *FlashcardDB) DeleteFlashcard(flashcardId int64) (bool, error) {
+func (db *Database) DeleteFlashcard(flashcardId int64) (bool, error) {
 	result, err := db.DB.Exec("DELETE FROM flashcards WHERE id = ?", flashcardId)
 
 	if err != nil {

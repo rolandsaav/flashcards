@@ -1,7 +1,9 @@
 package app
 
-import "backend/database"
+import (
+	"backend/database"
+)
 
 type App struct {
-	FlashcardDB database.FlashcardDB
+	DB database.Database
 }

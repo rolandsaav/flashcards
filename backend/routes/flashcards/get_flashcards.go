@@ -15,7 +15,7 @@ type GetFlashcardsResponse struct {
 
 func HandleGetFlashcards(app *app.App) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		flashcards, err := app.FlashcardDB.GetFlashcards()
+		flashcards, err := app.DB.GetFlashcards()
 
 		if err != nil {
 			c.IndentedJSON(http.StatusInternalServerError, &GetFlashcardsResponse{

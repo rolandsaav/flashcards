@@ -19,7 +19,7 @@ func HandleDeleteFlashcard(app *app.App) gin.HandlerFunc {
 			return
 		}
 
-		deleted, err := app.FlashcardDB.DeleteFlashcard(id)
+		deleted, err := app.DB.DeleteFlashcard(id)
 
 		if err != nil {
 			c.IndentedJSON(http.StatusInternalServerError, err.Error())

@@ -9,6 +9,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type CreateFlashcardResponse struct {
+}
+
 func HandleCreateFlashcard(app *app.App) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var newFlashcard database.Flashcard
@@ -19,7 +22,7 @@ func HandleCreateFlashcard(app *app.App) gin.HandlerFunc {
 			return
 		}
 
-		flashcard, err := app.FlashcardDB.CreateFlashcard(newFlashcard)
+		flashcard, err := app.DB.CreateFlashcard(newFlashcard)
 
 		if err != nil {
 			fmt.Println("error with creating flashcard")

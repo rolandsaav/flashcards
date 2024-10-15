@@ -22,7 +22,7 @@ func HandleUpdateFlashcard(app *app.App) gin.HandlerFunc {
 			return
 		}
 
-		resultFlashcard, err := app.FlashcardDB.UpdateFlashcard(updateFlashcard)
+		resultFlashcard, err := app.DB.UpdateFlashcard(updateFlashcard)
 
 		if err != nil {
 			c.IndentedJSON(http.StatusInternalServerError, err.Error())

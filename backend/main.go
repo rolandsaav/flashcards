@@ -30,7 +30,7 @@ func main() {
 		fmt.Println("Connected to database")
 	}
 
-	app := &app.App{FlashcardDB: database.FlashcardDB{DB: db}}
+	app := &app.App{DB: database.Database{DB: db}}
 
 	router := gin.Default()
 
