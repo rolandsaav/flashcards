@@ -1,7 +1,6 @@
 package database
 
 import (
-	"database/sql"
 	"fmt"
 )
 
@@ -10,10 +9,6 @@ type Flashcard struct {
 	OwnerID    int64  `json:"owner_id"`
 	Term       string `json:"term"`
 	Definition string `json:"definition"`
-}
-
-type FlashcardDB struct {
-	DB *sql.DB
 }
 
 func (flashcard Flashcard) String() string {

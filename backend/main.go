@@ -3,7 +3,8 @@ package main
 import (
 	"backend/app"
 	"backend/database"
-	routes "backend/routes/flashcards"
+	flashcardRoutes "backend/routes/flashcards"
+	userRoutes "backend/routes/users"
 	"fmt"
 	"os"
 
@@ -41,10 +42,13 @@ func main() {
 		AllowCredentials: true,
 	}))
 
-	router.GET("/flashcards", routes.HandleGetFlashcards(app))
-	router.POST("/flashcards", routes.HandleCreateFlashcard(app))
-	router.PATCH("/flashcards", routes.HandleUpdateFlashcard(app))
-	router.DELETE("/flashcards/:flashcardId", routes.HandleDeleteFlashcard(app))
+	router.GET("/flashcards", flashcardRoutes.HandleGetFlashcards(app))
+	router.POST("/flashcards", flashcardRoutes.HandleCreateFlashcard(app))
+	router.PATCH("/flashcards", flashcardRoutes.HandleUpdateFlashcard(app))
+	router.DELETE("/flashcards/:flashcardId", flashcardRoutes.HandleDeleteFlashcard(app))
+
+	router.POST("/register", userRoutes.HandleRegister(app))
+	router.POST("/login", userRoutes.HandleLogin(app))
 
 	router.Run("localhost:8080")
 }

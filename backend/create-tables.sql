@@ -11,9 +11,9 @@ CREATE TABLE flashcards (
 DROP TABLE IF EXISTS users;
 CREATE TABLE users (
     id INT AUTO_INCREMENT NOT NULL,
-    username VARCHAR(32) NOT NULL,
+    username VARCHAR(128) NOT NULL,
     hashed VARCHAR(128) NOT NULL,
-    salt VARCHAR(32) NOT NULL,
+    salt VARCHAR(128) NOT NULL,
     PRIMARY KEY (`id`)
 );
 DROP TABLE IF EXISTS sessions;
