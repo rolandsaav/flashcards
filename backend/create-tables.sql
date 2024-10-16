@@ -19,8 +19,9 @@ CREATE TABLE users (
 DROP TABLE IF EXISTS sessions;
 CREATE TABLE sessions (
     id INT AUTO_INCREMENT NOT NULL,
-    user INT NOT NULL,
-    expiration TIME NOT NULL,
-    created TIME NOT NULL,
+    user_id INT NOT NULL,
+    token VARCHAR(128) NOT NULL,
+    expiration DATETIME NOT NULL,
+    created_at DATETIME NOT NULL,
     PRIMARY KEY (`id`)
 );

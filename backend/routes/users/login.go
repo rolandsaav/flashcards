@@ -2,17 +2,24 @@ package routes
 
 import (
 	"backend/app"
+	"backend/database"
 	"encoding/base64"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type LoginRequestBody struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
+}
+
+type LoginResponseBody struct {
+	Token string `json:"token"`
 }
 
 func HandleLogin(app *app.App) gin.HandlerFunc {
@@ -48,7 +55,16 @@ func HandleLogin(app *app.App) gin.HandlerFunc {
 			return
 		}
 
-		c.IndentedJSON(http.StatusOK, "You are logged in")
+		newSession := database.Session{
+			UserId:     user.Id,
+			Token:      uuid.New().String(),
+			Expiration: time.Now().Add(time.Minute * 30),
+			Created:    time.Now(),
+		}
+
+		session, err := app.DB.CreateSession(newSession)
+
+		c.IndentedJSON(http.StatusOK, LoginResponseBody{Token: session.Token})
 		return
 	}
 }

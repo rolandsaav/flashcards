@@ -3,6 +3,7 @@ package main
 import (
 	"backend/app"
 	"backend/database"
+	"backend/middleware"
 	flashcardRoutes "backend/routes/flashcards"
 	userRoutes "backend/routes/users"
 	"fmt"
@@ -16,11 +17,12 @@ import (
 
 func main() {
 	cfg := mysql.Config{
-		User:   os.Getenv("DBUSER"),
-		Passwd: os.Getenv("DBPASS"),
-		Net:    "tcp",
-		Addr:   "127.0.0.1:3306",
-		DBName: "quizlet",
+		User:      os.Getenv("DBUSER"),
+		Passwd:    os.Getenv("DBPASS"),
+		Net:       "tcp",
+		Addr:      "127.0.0.1:3306",
+		DBName:    "quizlet",
+		ParseTime: true,
 	}
 
 	db, err := database.ConnectToDB(cfg)
@@ -42,10 +44,15 @@ func main() {
 		AllowCredentials: true,
 	}))
 
-	router.GET("/flashcards", flashcardRoutes.HandleGetFlashcards(app))
-	router.POST("/flashcards", flashcardRoutes.HandleCreateFlashcard(app))
-	router.PATCH("/flashcards", flashcardRoutes.HandleUpdateFlashcard(app))
-	router.DELETE("/flashcards/:flashcardId", flashcardRoutes.HandleDeleteFlashcard(app))
+	authRequired := router.Group("")
+
+	authRequired.Use(middleware.ValidateAndUpdateSession(app))
+	{
+		authRequired.GET("/flashcards", flashcardRoutes.HandleGetFlashcards(app))
+		authRequired.POST("/flashcards", flashcardRoutes.HandleCreateFlashcard(app))
+		authRequired.PATCH("/flashcards", flashcardRoutes.HandleUpdateFlashcard(app))
+		authRequired.DELETE("/flashcards/:flashcardId", flashcardRoutes.HandleDeleteFlashcard(app))
+	}
 
 	router.POST("/register", userRoutes.HandleRegister(app))
 	router.POST("/login", userRoutes.HandleLogin(app))
