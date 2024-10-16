@@ -1,7 +1,9 @@
 package database
 
-import "time"
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 type Session struct {
 	Id         int64
@@ -42,4 +44,16 @@ func (db *Database) GetSessionByToken(token string) (*Session, error) {
 	}
 
 	return &session, nil
+}
+
+func (db *Database) UpdateSessionToken(session Session) error {
+	_, err := db.DB.Exec("UPDATE sessions SET expiration = ? WHERE id = ?",
+		time.Now().Add(time.Minute*30),
+		session.Id)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -32,6 +32,13 @@ func ValidateAndUpdateSession(app *app.App) gin.HandlerFunc {
 			return
 		}
 
+		err = app.DB.UpdateSessionToken(*session)
+
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusAccepted, err.Error())
+			return
+		}
+
 		c.Next()
 	}
 }
