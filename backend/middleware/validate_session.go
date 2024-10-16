@@ -3,7 +3,6 @@ package middleware
 import (
 	"backend/app"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -11,16 +10,14 @@ import (
 
 func ValidateAndUpdateSession(app *app.App) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		token := c.GetHeader("Authorization")
+		cookie, err := c.Cookie("auth_cookie")
 
-		if token == "" {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, "You are not authorized")
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, err.Error())
 			return
 		}
 
-		sessionToken := strings.TrimPrefix(token, "Bearer ")
-
-		session, err := app.DB.GetSessionByToken(sessionToken)
+		session, err := app.DB.GetSessionByToken(cookie)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, err.Error())

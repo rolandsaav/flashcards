@@ -18,10 +18,6 @@ type LoginRequestBody struct {
 	Password string `json:"password"`
 }
 
-type LoginResponseBody struct {
-	Token string `json:"token"`
-}
-
 func HandleLogin(app *app.App) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var body LoginRequestBody
@@ -64,7 +60,9 @@ func HandleLogin(app *app.App) gin.HandlerFunc {
 
 		session, err := app.DB.CreateSession(newSession)
 
-		c.IndentedJSON(http.StatusOK, LoginResponseBody{Token: session.Token})
+		c.SetCookie("auth_cookie", session.Token, 3600, "/", "localhost", false, true)
+
+		c.IndentedJSON(http.StatusOK, "Login successful")
 		return
 	}
 }
