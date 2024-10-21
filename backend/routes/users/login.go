@@ -60,7 +60,8 @@ func HandleLogin(app *app.App) gin.HandlerFunc {
 
 		session, err := app.DB.CreateSession(newSession)
 
-		c.SetCookie("auth_cookie", session.Token, 3600, "/", "localhost", false, true)
+		c.SetCookie("session", session.Token, 3600, "/", "", false, true)
+		// c.Writer.Header().Add("Set-Cookie", fmt.Sprintf("session=%s; Path=/; HttpOnly;", session.Token))
 
 		c.IndentedJSON(http.StatusOK, "Login successful")
 		return

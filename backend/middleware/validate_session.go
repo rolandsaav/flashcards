@@ -10,7 +10,7 @@ import (
 
 func ValidateAndUpdateSession(app *app.App) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		cookie, err := c.Cookie("auth_cookie")
+		cookie, err := c.Cookie("session")
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, err.Error())
@@ -32,7 +32,7 @@ func ValidateAndUpdateSession(app *app.App) gin.HandlerFunc {
 		err = app.DB.UpdateSessionToken(*session)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusAccepted, err.Error())
+			c.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
 			return
 		}
 
