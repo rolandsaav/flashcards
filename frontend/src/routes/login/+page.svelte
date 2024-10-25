@@ -1,12 +1,12 @@
 <script lang="ts">
-	let status = 'Not logged in';
+	import { register } from '$lib/register';
+	import { login } from '$lib/login';
 	let username = '';
 	let password = '';
 </script>
 
 <h1>Login Page</h1>
-<p>Status {status}</p>
-<form class="inputs" method="POST" action="?/login">
+<form class="inputs">
 	<div class="input">
 		<label for="term">Username</label>
 		<input bind:value={username} name="username" id="username" type="text" />
@@ -17,6 +17,13 @@
 	</div>
 
 	<div class="buttons">
-		<button>Login</button>
+		<button on:click={() => login(username, password)}>Login</button>
+		<button on:click={() => register(username, password)}>Register</button>
 	</div>
 </form>
+
+<style>
+	.buttons {
+		display: flex;
+	}
+</style>

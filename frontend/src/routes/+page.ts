@@ -14,9 +14,8 @@ export const load: Load = async ({ fetch }) => {
     if (res.status == 401) {
         redirect(302, "/login")
     } else {
-        flashcards = response.data
+        flashcards = response.data == null ? []: response.data
     }
-
 
     return {
         flashcards: flashcards,

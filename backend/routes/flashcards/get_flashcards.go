@@ -23,14 +23,6 @@ func HandleGetFlashcards(app *app.App) gin.HandlerFunc {
 			})
 			return
 		}
-
-		if len(flashcards) == 0 {
-			c.IndentedJSON(http.StatusOK, &GetFlashcardsResponse{
-				Error: "No flashcards found",
-			})
-			return
-		}
-
 		c.IndentedJSON(http.StatusOK, &GetFlashcardsResponse{
 			Data: flashcards,
 		})
