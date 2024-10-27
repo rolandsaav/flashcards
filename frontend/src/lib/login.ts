@@ -1,4 +1,7 @@
 import { goto } from "$app/navigation"
+import { setContext } from 'svelte';
+import { writable } from 'svelte/store';
+
 
 export const login = async (username: string, password: string) => {
     console.log("Login")
@@ -15,6 +18,9 @@ export const login = async (username: string, password: string) => {
     if (response.ok) {
         console.log("Logged in")
         const data = await response.json()
+        const user = writable();
+        $: user.set(data)
+        setContext("user", user)
         console.log(data)
         goto("/")
     }
