@@ -18,6 +18,11 @@ type LoginRequestBody struct {
 	Password string `json:"password"`
 }
 
+type LoginResponseBody struct {
+	Id       int64  `json:"id"`
+	Username string `json:"username"`
+}
+
 func HandleLogin(app *app.App) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var body LoginRequestBody
@@ -31,7 +36,7 @@ func HandleLogin(app *app.App) gin.HandlerFunc {
 		user, err := app.DB.GetUserFromUsername(body.Username)
 		if err != nil {
 			fmt.Print("Error getting user")
-			c.IndentedJSON(http.StatusBadRequest, err.Error())
+			c.IndentedJSON(http.StatusBadRequest, "Account does not exist")
 			return
 		}
 
@@ -62,7 +67,7 @@ func HandleLogin(app *app.App) gin.HandlerFunc {
 
 		c.SetCookie("auth_cookie", session.Token, 3600, "/", "localhost", false, true)
 
-		c.IndentedJSON(http.StatusOK, "Login successful")
+		c.IndentedJSON(http.StatusOK, LoginResponseBody{Username: user.Username, Id: user.Id})
 		return
 	}
 }

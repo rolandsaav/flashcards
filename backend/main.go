@@ -56,6 +56,7 @@ func main() {
 
 	router.POST("/register", userRoutes.HandleRegister(app))
 	router.POST("/login", userRoutes.HandleLogin(app))
+	router.POST("/logout", userRoutes.HandleLogout(app))
 
 	router.Run("localhost:8080")
 }

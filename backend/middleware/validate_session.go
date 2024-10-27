@@ -13,14 +13,14 @@ func ValidateAndUpdateSession(app *app.App) gin.HandlerFunc {
 		cookie, err := c.Cookie("auth_cookie")
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, err.Error())
+			c.AbortWithStatusJSON(http.StatusInternalServerError, "Internal server error")
 			return
 		}
 
 		session, err := app.DB.GetSessionByToken(cookie)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, err.Error())
+			c.AbortWithStatusJSON(http.StatusUnauthorized, "Not authorized")
 			return
 		}
 

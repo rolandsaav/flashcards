@@ -23,5 +23,6 @@ CREATE TABLE sessions (
     token VARCHAR(128) NOT NULL,
     expiration DATETIME NOT NULL,
     created_at DATETIME NOT NULL,
+    expired BOOLEAN DEFAULT 0,
     PRIMARY KEY (`id`)
 );
