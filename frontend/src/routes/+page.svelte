@@ -29,7 +29,8 @@
 					owner_id: owner,
 					term: term,
 					definition: definition
-				})
+				}),
+				credentials: 'include'
 			});
 
 			if (response.ok) {
