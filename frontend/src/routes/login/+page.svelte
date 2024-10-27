@@ -1,13 +1,12 @@
 <script lang="ts">
 	import { register } from '$lib/register';
-	import { setContext } from 'svelte';
-	import { writable } from 'svelte/store';
-	import { goto } from "$app/navigation"
+	import { goto } from '$app/navigation';
+	import { user } from '../../auth';
 	let username = '';
 	let password = '';
 
 	const login = async (username: string, password: string) => {
-		console.log('Login');
+		console.log('Login Attempt');
 		const response = await fetch('http://localhost:8080/login', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
@@ -17,15 +16,15 @@
 			}),
 			credentials: 'include'
 		});
-
+		const data = await response.json();
 		if (response.ok) {
 			console.log('Logged in');
-			const data = await response.json();
-			const user = writable();
 			user.set(data);
-			setContext('user', user);
 			console.log(data);
 			goto('/');
+		} else {
+			console.log('Request was not ok');
+			console.log(data);
 		}
 	};
 </script>
