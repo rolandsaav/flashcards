@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { user } from '../auth';
 	import type { Flashcard } from '../types/Flashcard';
 	export let data: { flashcards: Flashcard[] };
 
@@ -6,7 +7,6 @@
 
 	let term = '';
 	let definition = '';
-	let owner = 0;
 	let i = 0;
 
 	$: selected = flashcards[i];
@@ -15,7 +15,6 @@
 	function resetInputs(card: Flashcard) {
 		term = card ? card.term : '';
 		definition = card ? card.definition : '';
-		owner = card ? card.owner_id : NaN;
 	}
 
 	async function createFlashcard(event: MouseEvent) {
@@ -26,7 +25,7 @@
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
-					owner_id: owner,
+					owner_id: $user.id,
 					term: term,
 					definition: definition
 				}),
@@ -55,10 +54,11 @@
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
 					id: selected.id,
-					owner_id: owner,
+					owner_id: $user.id,
 					term: term,
 					definition: definition
-				})
+				}),
+				credentials: "include"
 			});
 
 			if (response.ok) {
@@ -81,7 +81,8 @@
 		try {
 			const response = await fetch(`http://localhost:8080/flashcards/${selected.id}`, {
 				method: 'DELETE',
-				headers: { 'Content-Type': 'application/json' }
+				headers: { 'Content-Type': 'application/json' },
+				credentials: "include"
 			});
 
 			if (response.ok) {
@@ -115,10 +116,6 @@
 	<div class="input">
 		<label for="definition">Definition</label>
 		<textarea bind:value={definition} name="definition" id="definition" rows="2" />
-	</div>
-	<div class="input">
-		<label for="owner">Owner ID</label>
-		<input bind:value={owner} name="owner" id="owner" type="number" />
 	</div>
 
 	<div class="buttons">
