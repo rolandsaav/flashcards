@@ -10,7 +10,7 @@ import (
 
 func ValidateAndUpdateSession(app *app.App) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		cookie, err := c.Cookie("session")
+		cookie, err := c.Cookie("auth_cookie")
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, "Internal server error")
